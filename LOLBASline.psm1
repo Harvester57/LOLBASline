@@ -72,7 +72,7 @@ function Invoke-LOLBASline {
             }
         }
         else {
-            Write-Host "$Destination already exists. Using existing repository."
+            Write-Output "$Destination already exists. Using existing repository."
         }
 
         $finalPath = "$Destination/yml/OSBinaries"
