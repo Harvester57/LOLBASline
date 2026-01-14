@@ -55,16 +55,16 @@ function Invoke-LOLBASline {
             Remove-Item 'LOLBAS.zip'
         }
         else {
-            Write-Host "Git is installed. Proceeding with cloning the repository."
+            Write-Output "Git is installed. Proceeding with cloning the repository."
         }
 
         if (-not (Test-Path $Destination)) {
             $RepoURL = "https://github.com/LOLBAS-Project/LOLBAS.git"
-            Write-Host "Cloning LOLBAS project to $Destination..."
+            Write-Output "Cloning LOLBAS project to $Destination..."
             git clone --depth 1 $RepoURL $Destination
         }
         else {
-            Write-Host "$Destination already exists. Using existing repository."
+            Write-Output "$Destination already exists. Using existing repository."
         }
         return "$Destination/yml/OSBinaries"
     }
@@ -118,7 +118,7 @@ function Invoke-LOLBASline {
                     $executionResult = "Not Executed"
                     
                     if ($Presence) {
-                        Write-Host "Attempting to execute command: $ExecutableCommand" -ForegroundColor Cyan
+                        Write-Verbose "Attempting to execute command: $ExecutableCommand"
                         try {
                             $process = Start-Process -FilePath "cmd.exe" -ArgumentList "/c $ExecutableCommand" -PassThru -WindowStyle Hidden
                             Start-Sleep -Seconds 2 # Give the command a moment to execute; adjust as needed
@@ -166,12 +166,12 @@ function Invoke-LOLBASline {
 
     $Path = Clone-LOLBASRepo -Destination "lolbas_repo"
     if (-not $Path) {
-        Write-Host "Unable to continue without Git. Exiting script."
+        Write-Output "Unable to continue without Git. Exiting script."
         return
     }
 
     $YamlData = Load-YAMLFiles -DirectoryPath $Path
     $Results = Check-Binaries -YamlData $YamlData -Verbose:$Verbose
     $Results | Export-Csv -Path $Output -NoTypeInformation
-    Write-Host "Results written to $Output"
+    Write-Output "Results written to $Output"
 }
