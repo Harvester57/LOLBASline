@@ -107,7 +107,7 @@ function Invoke-LOLBASline {
                         $Presence = if (Test-Path $ExecutablePath) { $true } else { $false }
                     }
                     catch {
-                        $Presence = "Error in Path"
+                        $Presence = $null
                         if ($Verbose) {
                             Write-Host "Error testing path '$ExecutablePath': $_" -ForegroundColor Red
                         }
