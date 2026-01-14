@@ -64,7 +64,15 @@ function Invoke-LOLBASline {
         else {
             Write-Host "$Destination already exists. Using existing repository."
         }
-        return "$Destination/yml/OSBinaries"
+
+        $finalPath = "$Destination/yml/OSBinaries"
+        if (Test-Path $finalPath) {
+            return $finalPath
+        }
+        else {
+            Write-Error "Failed to obtain LOLBAS repository files."
+            return $null
+        }
     }
 
     function Load-YAMLFiles {
