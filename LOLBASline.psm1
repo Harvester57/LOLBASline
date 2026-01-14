@@ -95,7 +95,7 @@ function Invoke-LOLBASline {
                 foreach ($CommandInfo in $Data.Commands) {
                     $ExecutablePath = $Data.Full_Path[0].Path
                     try {
-                        $Presence = if (Test-Path $ExecutablePath) { "Yes" } else { "No" }
+                        $Presence = if (Test-Path $ExecutablePath) { $true } else { $false }
                     }
                     catch {
                         $Presence = "Error in Path"
@@ -106,7 +106,7 @@ function Invoke-LOLBASline {
                     $ExecutableCommand = $CommandInfo.Command
                     $executionResult = "Not Executed"
                     
-                    if ($Presence -eq "Yes") {
+                    if ($Presence) {
                         try {
                             $process = Start-Process -FilePath "cmd.exe" -ArgumentList "/c $ExecutableCommand" -PassThru -WindowStyle Hidden
                             Start-Sleep -Seconds 2 # Give the command a moment to execute; adjust as needed
