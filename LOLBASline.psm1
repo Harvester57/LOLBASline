@@ -90,7 +90,14 @@ function Invoke-LOLBASline {
 
         $Results = @()
 
+        $i = 0
+        $total = $YamlData.Count
+
         foreach ($Data in $YamlData) {
+            $i++
+            $percent = [math]::Round(($i / $total) * 100)
+            Write-Progress -Activity "Checking Binaries" -Status "Processing $($Data.Name) ($i of $total)" -PercentComplete $percent
+
             if ($Data.Commands) {
                 foreach ($CommandInfo in $Data.Commands) {
                     $ExecutablePath = $Data.Full_Path[0].Path
@@ -107,6 +114,7 @@ function Invoke-LOLBASline {
                     $executionResult = "Not Executed"
                     
                     if ($Presence) {
+                        Write-Host "Attempting to execute command: $ExecutableCommand" -ForegroundColor Cyan
                         try {
                             $process = Start-Process -FilePath "cmd.exe" -ArgumentList "/c $ExecutableCommand" -PassThru -WindowStyle Hidden
                             Start-Sleep -Seconds 2 # Give the command a moment to execute; adjust as needed
@@ -147,6 +155,7 @@ function Invoke-LOLBASline {
                 }
             }
         }
+        Write-Progress -Activity "Checking Binaries" -Completed
 
         return $Results
     }
