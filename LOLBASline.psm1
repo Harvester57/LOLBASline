@@ -40,29 +40,30 @@ function Invoke-LOLBASline {
 
     Import-Module powershell-yaml -ErrorAction Stop
 
-	function Clone-LOLBASRepo {
-		param (
-			[string]$Destination
-		)
+    function Clone-LOLBASRepo {
+        param (
+            [string]$Destination
+        )
 
-		# Check if git is available
-		$gitInstalled = Get-Command "git" -ErrorAction SilentlyContinue
-		if (-not $gitInstalled) {
-			Write-Warning "Git is not installed. Please install Git to use this module."
-			Write-Host "You can download Git from https://git-scm.com/downloads"
-			# Exit the script if Git is not installed
-			return $null
-		}
+        # Check if git is available
+        $gitInstalled = Get-Command "git" -ErrorAction SilentlyContinue
+        if (-not $gitInstalled) {
+            Write-Warning "Git is not installed. Please install Git to use this module."
+            Write-Host "You can download Git from https://git-scm.com/downloads"
+            # Exit the script if Git is not installed
+            return $null
+        }
 
-		if (-not (Test-Path $Destination)) {
-			$RepoURL = "https://github.com/LOLBAS-Project/LOLBAS.git"
-			Write-Host "Cloning LOLBAS project to $Destination..."
-			git clone $RepoURL $Destination
-		} else {
-			Write-Host "$Destination already exists. Using existing repository."
-		}
-		return "$Destination/yml/OSBinaries"
-	}
+        if (-not (Test-Path $Destination)) {
+            $RepoURL = "https://github.com/LOLBAS-Project/LOLBAS.git"
+            Write-Host "Cloning LOLBAS project to $Destination..."
+            git clone $RepoURL $Destination
+        }
+        else {
+            Write-Host "$Destination already exists. Using existing repository."
+        }
+        return "$Destination/yml/OSBinaries"
+    }
 
     function Load-YAMLFiles {
         param (
@@ -95,7 +96,8 @@ function Invoke-LOLBASline {
                     $ExecutablePath = $Data.Full_Path[0].Path
                     try {
                         $Presence = if (Test-Path $ExecutablePath) { "Yes" } else { "No" }
-                    } catch {
+                    }
+                    catch {
                         $Presence = "Error in Path"
                         if ($Verbose) {
                             Write-Host "Error testing path '$ExecutablePath': $_" -ForegroundColor Red
@@ -111,10 +113,12 @@ function Invoke-LOLBASline {
                             if ($process.HasExited -eq $false) {
                                 $process.Kill()
                                 $executionResult = "Executed"
-                            } else {
+                            }
+                            else {
                                 $executionResult = "Failed"
                             }
-                        } catch {
+                        }
+                        catch {
                             $executionResult = "Error"
                         }
                     }
@@ -135,8 +139,8 @@ function Invoke-LOLBASline {
                     if ($Verbose) {
                         $color = switch ($executionResult) {
                             "Executed" { "Green" }
-                            "Failed"   { "Red" }
-                            Default    { "Yellow" }
+                            "Failed" { "Red" }
+                            Default { "Yellow" }
                         }
                         Write-Host "$($Data.Name): Presence = $($Presence), Execution result = $($executionResult)" -ForegroundColor $color
                     }
@@ -147,11 +151,11 @@ function Invoke-LOLBASline {
         return $Results
     }
 
-	$Path = Clone-LOLBASRepo -Destination "lolbas_repo"
-	if (-not $Path) {
-		Write-Host "Unable to continue without Git. Exiting script."
-		return
-	}
+    $Path = Clone-LOLBASRepo -Destination "lolbas_repo"
+    if (-not $Path) {
+        Write-Host "Unable to continue without Git. Exiting script."
+        return
+    }
 
     $YamlData = Load-YAMLFiles -DirectoryPath $Path
     $Results = Check-Binaries -YamlData $YamlData -Verbose:$Verbose
