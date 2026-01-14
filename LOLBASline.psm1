@@ -182,7 +182,7 @@ function Invoke-LOLBASline {
 
     $Path = Clone-LOLBASRepo -Destination "lolbas_repo"
     if (-not $Path) {
-        Write-Output "Unable to continue without Git. Exiting script."
+        Write-Warning "Failed to obtain LOLBAS repository files. Unable to continue."
         return
     }
 
