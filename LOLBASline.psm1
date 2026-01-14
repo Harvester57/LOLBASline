@@ -48,16 +48,20 @@ function Invoke-LOLBASline {
         # Check if git is available
         $gitInstalled = Get-Command "git" -ErrorAction SilentlyContinue
         if (-not $gitInstalled) {
-            Write-Warning "Git is not installed. Please install Git to use this module."
-            Write-Host "You can download Git from https://git-scm.com/downloads"
-            # Exit the script if Git is not installed
-            return $null
+            Write-Warning "Git is not installed. Proceeding to download the repository as a ZIP file."
+            Invoke-WebRequest -Uri 'https://github.com/LOLBAS-Project/LOLBAS/archive/refs/heads/master.zip' -OutFile 'LOLBAS.zip'
+            Expand-Archive -Path 'LOLBAS.zip' -DestinationPath .
+            Move-Item 'LOLBAS-master' $Destination
+            Remove-Item 'LOLBAS.zip'
+        }
+        else {
+            Write-Host "Git is installed. Proceeding with cloning the repository."
         }
 
         if (-not (Test-Path $Destination)) {
             $RepoURL = "https://github.com/LOLBAS-Project/LOLBAS.git"
             Write-Host "Cloning LOLBAS project to $Destination..."
-            git clone $RepoURL $Destination
+            git clone --depth 1 $RepoURL $Destination
         }
         else {
             Write-Host "$Destination already exists. Using existing repository."
