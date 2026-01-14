@@ -45,26 +45,24 @@ function Invoke-LOLBASline {
             [string]$Destination
         )
 
-        # Check if git is available
-        $gitInstalled = Get-Command "git" -ErrorAction SilentlyContinue
-        if (-not $gitInstalled) {
-            Write-Warning "Git is not installed. Proceeding to download the repository as a ZIP file."
-            Invoke-WebRequest -Uri 'https://github.com/LOLBAS-Project/LOLBAS/archive/refs/heads/master.zip' -OutFile 'LOLBAS.zip'
-            Expand-Archive -Path 'LOLBAS.zip' -DestinationPath .
-            Move-Item 'LOLBAS-master' $Destination
-            Remove-Item 'LOLBAS.zip'
-        }
-        else {
-            Write-Output "Git is installed. Proceeding with cloning the repository."
-        }
-
         if (-not (Test-Path $Destination)) {
-            $RepoURL = "https://github.com/LOLBAS-Project/LOLBAS.git"
-            Write-Output "Cloning LOLBAS project to $Destination..."
-            git clone --depth 1 $RepoURL $Destination
+            $gitInstalled = Get-Command "git" -ErrorAction SilentlyContinue
+            if ($gitInstalled) {
+                Write-Output "Git is installed. Proceeding with cloning the repository."
+                $RepoURL = "https://github.com/LOLBAS-Project/LOLBAS.git"
+                Write-Output "Cloning LOLBAS project to $Destination..."
+                git clone --depth 1 $RepoURL $Destination
+            }
+            else {
+                Write-Warning "Git is not installed. Proceeding to download the repository as a ZIP file."
+                Invoke-WebRequest -Uri 'https://github.com/LOLBAS-Project/LOLBAS/archive/refs/heads/master.zip' -OutFile 'LOLBAS.zip'
+                Expand-Archive -Path 'LOLBAS.zip' -DestinationPath .
+                Move-Item 'LOLBAS-master' $Destination
+                Remove-Item 'LOLBAS.zip'
+            }
         }
         else {
-            Write-Output "$Destination already exists. Using existing repository."
+            Write-Host "$Destination already exists. Using existing repository."
         }
         return "$Destination/yml/OSBinaries"
     }
