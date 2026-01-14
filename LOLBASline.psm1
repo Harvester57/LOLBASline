@@ -137,13 +137,11 @@ function Invoke-LOLBASline {
                         Write-Verbose "Attempting to execute command: $ExecutableCommand"
                         try {
                             $process = Start-Process -FilePath "cmd.exe" -ArgumentList "/c $ExecutableCommand" -PassThru -WindowStyle Hidden
-                            Start-Sleep -Seconds 2 # Give the command a moment to execute; adjust as needed
-                            if ($process.HasExited -eq $false) {
+                            if ($process.WaitForExit(2000)) {
+                                $executionResult = if ($process.ExitCode -eq 0) { "Executed" } else { "Failed" }
+                            } else {
                                 $process.Kill()
                                 $executionResult = "Executed"
-                            }
-                            else {
-                                $executionResult = "Failed"
                             }
                         }
                         catch {
