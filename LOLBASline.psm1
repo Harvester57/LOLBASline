@@ -122,7 +122,7 @@ function Invoke-LOLBASline {
                 foreach ($CommandInfo in $Data.Commands) {
                     $ExecutablePath = $Data.Full_Path[0].Path
                     try {
-                        $Presence = if (Test-Path $ExecutablePath) { $true } else { $false }
+                        $Presence = Test-Path $ExecutablePath -ErrorAction Stop
                     }
                     catch {
                         $Presence = $null
