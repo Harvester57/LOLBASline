@@ -55,10 +55,20 @@ function Invoke-LOLBASline {
             }
             else {
                 Write-Warning "Git is not installed. Proceeding to download the repository as a ZIP file."
-                Invoke-WebRequest -Uri 'https://github.com/LOLBAS-Project/LOLBAS/archive/refs/heads/master.zip' -OutFile 'LOLBAS.zip'
-                Expand-Archive -Path 'LOLBAS.zip' -DestinationPath .
-                Move-Item 'LOLBAS-master' $Destination
-                Remove-Item 'LOLBAS.zip'
+                $zipFile = 'LOLBAS.zip'
+                try {
+                    Invoke-WebRequest -Uri 'https://github.com/LOLBAS-Project/LOLBAS/archive/refs/heads/master.zip' -OutFile $zipFile -ErrorAction Stop
+                    Expand-Archive -Path $zipFile -DestinationPath . -ErrorAction Stop
+                    Move-Item -Path 'LOLBAS-master' -Destination $Destination -ErrorAction Stop
+                }
+                catch {
+                    Write-Error "Failed to download and extract LOLBAS repository. Error: $_"
+                }
+                finally {
+                    if (Test-Path $zipFile) {
+                        Remove-Item $zipFile -Force
+                    }
+                }
             }
         }
         else {
