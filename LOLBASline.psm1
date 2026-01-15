@@ -132,7 +132,7 @@ function Invoke-LOLBASline {
                     }
                     $ExecutableCommand = $CommandInfo.Command
                     $executionResult = "Not Executed"
-                    
+
                     if ($Presence) {
                         Write-Verbose "Attempting to execute command: $ExecutableCommand"
                         try {
